@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Section from '../Section';
 import FeedbackOptions from '../FeedbackOptions';
 import Statistics from '../Statistics';
+import Notification from '../Notification';
 
 import { FEEDBACK_OPTIONS } from '../../data/constans';
 
@@ -15,8 +16,7 @@ class App extends Component {
     bad: 0,
   };
 
-  handleFeedback = ({ target }) => {
-    const { feedback } = target.dataset;
+  handleFeedback = feedback => {
     this.setState(prevState => ({ [feedback]: prevState[feedback] + 1 }));
   };
 
@@ -28,7 +28,7 @@ class App extends Component {
   countPositiveFeedbackPercentage = () => {
     const { good } = this.state;
     let total = this.countTotalFeedback();
-    return total ? Math.round((good / total) * 100) : 0;
+    return total > 0 ? Math.round((good / total) * 100) : 0;
   };
 
   render() {
@@ -44,15 +44,19 @@ class App extends Component {
             onLeaveFeedback={this.handleFeedback}
           />
         </Section>
-        <Section title="Statistics">
-          <Statistics
-            good={good}
-            neutral={neutral}
-            bad={bad}
-            total={total}
-            positiveFeedbackPercentage={positiveFeedbackPercentage}
-          />
-        </Section>
+        {total > 0 ? (
+          <Section title="Statistics">
+            <Statistics
+              good={good}
+              neutral={neutral}
+              bad={bad}
+              total={total}
+              positiveFeedbackPercentage={positiveFeedbackPercentage}
+            />
+          </Section>
+        ) : (
+          <Notification message="There is no feedback" />
+        )}
       </div>
     );
   }
